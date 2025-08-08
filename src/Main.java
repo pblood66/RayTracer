@@ -1,31 +1,62 @@
 import java.io.FileWriter;
 import java.io.IOException;
 
+
 public class Main {
+
+    public static Color rayColor(Ray r) {
+        Vec3 unitDirection = r.direction().normalize();
+
+        double a = 0.5 * (unitDirection.y() + 1.0);
+        Color startValue = new Color(0.5, 0.7, 1.0);
+        Color endValue = new Color(1.0, 1.0, 1.0);
+
+        return (Color) startValue.multiply(1.0 - a).add(endValue.multiply(a));
+    }
+
     public static void main(String[] args) {
         String filename = "image.ppm";
 
-        int image_width = 256;
-        int image_height = 256;
+        int imageWidth = 256;
+        double aspectRatio = 16.0 / 9.0;
+        int imageHeight = (int) (imageWidth / aspectRatio);
+        imageHeight = (imageHeight < 1) ? 1 : imageHeight;
+
+        double focalLength = 1.0;
+        double viewportHeight = 2.0;
+        double viewportWidth = viewportHeight * (double) (imageWidth / imageHeight);
+        Vec3 cameraCenter = new Vec3(0, 0, 0);
+
+        Vec3 viewportU = new Vec3(viewportWidth, 0, 0);
+        Vec3 viewPortV = new Vec3(0, -viewportHeight, 0);
+
+        Vec3 pixelDeltaU = viewportU.divide(imageWidth);
+        Vec3 pixelDeltaV = viewPortV.divide(imageHeight);
+
+        // Calculate the location of the upper left pixel.
+        // cameraCenter - pixelDeltaU - vec3(0, 0, focalLength) - (viewportU / 2) - (viewportV / 2);
+        Vec3 viewportUpperLeft = cameraCenter.subtract(pixelDeltaU)
+                .subtract(new Vec3(0, 0, focalLength))
+                .subtract(viewportU.divide(2))
+                .subtract(viewPortV.divide(2));
+        // viewportUpperLeft + 0.5 * (pixelDeltaU + pixelDeltaV)
+        Vec3 pixel100Loc = viewportUpperLeft.add(0.5).multiply(pixelDeltaU.add(pixelDeltaV));
 
         StringBuilder str = new StringBuilder();
 
-        str.append("P3\n").append(image_width).append(" ").append(image_height).append("\n255\n");
+        str.append("P3\n").append(imageWidth).append(" ").append(imageHeight).append("\n255\n");
 
-        for (int j = 0; j < image_height; j++) {
-            System.out.print("\rLines Remaining: " + (image_height - j));
+        for (int j = 0; j < imageHeight; j++) {
+            System.out.print("\rLines Remaining: " + (imageHeight - j));
             System.out.flush();
-            for (int i = 0; i < image_width; i++) {
-                float r = (float) i / (float) (image_width - 1);
-                float g = (float) j / (float) (image_height - 1);
-                float b = 0;
+            for (int i = 0; i < imageWidth; i++) {
+                Vec3 pixelCenter = pixel100Loc.add(pixelDeltaU.multiply(i)).add(pixelDeltaV.multiply(j));
+                Vec3 rayDirection = pixelCenter.subtract(cameraCenter);
 
-                int ir = (int) (259.999 * r);
-                int ig = (int) (259.999 * g);
-                int ib = (int) (259.999 * b);
+                Ray ray = new Ray(cameraCenter, rayDirection);
 
-                str.append(ir).append(" ").append(ig).append(" ").append(ib).append("\n");
-
+                Color pixelColor = rayColor(ray);
+                str.append(pixelColor.writeColor());
             }
         }
 
