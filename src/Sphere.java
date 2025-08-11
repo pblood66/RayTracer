@@ -1,0 +1,41 @@
+public class Sphere implements Surface {
+    public Sphere(Point3 center, double radius) {
+        this.center = center;
+        this.radius = radius;
+    }
+
+    @Override
+    public boolean hit(Ray r, double rayTmin, double rayTmax, SurfaceRecord rec) {
+        Vec3 oc = center.subtract(r.origin());
+        var a = r.direction().lengthSquared();
+        var h = Vec3.dot(r.direction(), oc);
+        var c  = oc.lengthSquared() - radius * radius;
+
+        var discriminant = h * h - a * c;
+        if (discriminant < 0) {
+            return false;
+        }
+
+        var sqrt = Math.sqrt(discriminant);
+
+        var root = (h - sqrt) / a;
+        if (root <= rayTmin || rayTmax <= root) {
+            root = (h + sqrt) / a;
+            if (root <= rayTmin || rayTmax <= root) {
+                return false;
+            }
+        }
+
+        rec.t = root;
+        rec.p = (Point3) r.at(rec.t);
+//        rec.normal = (rec.p.subtract(center)).divide(radius);
+        Vec3 outwardNormal = (rec.p.subtract(center)).divide(radius);
+        rec.setFaceNormal(r, outwardNormal);
+
+        return true;
+    }
+
+    private Point3 center;
+    private double radius;
+
+}

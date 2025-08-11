@@ -83,6 +83,10 @@ public class Vec3 {
         return e[0] * v.e[0] + e[1] * v.e[1] + e[2] * v.e[2];
     }
 
+    public static double dot(Vec3 v1, Vec3 v2) {
+        return v1.e[0] * v2.e[0] + v1.e[1] * v2.e[1] + v1.e[2] * v2.e[2];
+    }
+
     public Vec3 cross(Vec3 v) {
         return create(e[1] * v.e[2] - e[2] * v.e[1],
                 e[2] * v.e[0] - e[0] * v.e[2],
@@ -93,5 +97,8 @@ public class Vec3 {
         return this.divide(this.length());
     }
 
+    public static Vec3 unitVector(Vec3 v) {
+        return v.divide(v.length());
+    }
 
 }
