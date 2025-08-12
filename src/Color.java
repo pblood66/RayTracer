@@ -1,6 +1,10 @@
 public class Color extends Vec3 {
-    Color(double r, double g, double b) {
+    public Color(double r, double g, double b) {
         super (r, g, b);
+    }
+
+    public Color(Vec3 v) {
+        super (v.x(),  v.y(), v.z());
     }
 
     public double r() { return e[0]; }

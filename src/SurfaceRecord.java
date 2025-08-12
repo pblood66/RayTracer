@@ -13,4 +13,18 @@ public class SurfaceRecord {
         frontFace = Vec3.dot(r.direction(), outwardNormal) < 0;
         normal = frontFace ? outwardNormal : outwardNormal.negate();
     }
+
+    public void setValues(Vec3 p, Vec3 normal, double t,  boolean frontFace) {
+        this.p = p;
+        this.normal = normal;
+        this.t = t;
+        this.frontFace = frontFace;
+    }
+
+    public void setValues(SurfaceRecord rec) {
+        this.p = rec.p;
+        this.normal = rec.normal;
+        this.t = rec.t;
+        this.frontFace = rec.frontFace;
+    }
 }

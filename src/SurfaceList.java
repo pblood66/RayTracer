@@ -19,16 +19,16 @@ public class SurfaceList implements Surface {
     }
 
     @Override
-    public boolean hit(Ray r, double rayTmin, double rayTmax, SurfaceRecord rec) {
+    public boolean hit(Ray r, Interval rayT, SurfaceRecord rec) {
         SurfaceRecord temp = new SurfaceRecord();
         boolean hitDetected = false;
-        var closestSoFar = rayTmax;
+        var closestSoFar = rayT.max();
 
         for (var object : objects) {
-            if (object.hit(r, rayTmin, rayTmax, temp)) {
+            if (object.hit(r, new Interval(rayT.min(), closestSoFar), temp)) {
                 hitDetected = true;
                 closestSoFar = temp.t;
-                rec = temp;
+                rec.setValues(temp);
             }
         }
 

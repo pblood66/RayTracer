@@ -1,0 +1,87 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class Camera {
+    public void render(Surface world) throws IOException {
+        initialize();
+
+        builder.append("P3\n").append(imageWidth).append(" ").append(imageHeight).append("\n255\n");
+
+        for (int j = 0; j < imageHeight; j++) {
+                System.out.print("\rLines Remaining: " + (imageHeight - j));
+                System.out.flush();
+            for (int i = 0; i < imageWidth; i++) {
+                var pixelCenter = (pixel100Loc.add(pixelDeltaU.multiply(i))).add(pixelDeltaV.multiply(j));
+                var rayDirection = pixelCenter.subtract(center);
+
+                Ray r = new Ray(center, rayDirection);
+
+                Color pixelColor = rayColor(r, world);
+                builder.append(pixelColor.writeColor());
+            }
+        }
+        writeToFile("image.ppm", builder.toString());
+        System.out.println("\nDone");
+    }
+
+    private void initialize() {
+        builder = new StringBuilder();
+
+        imageHeight = (int) (imageWidth / aspectRatio);
+        imageHeight = (imageHeight < 1) ? 1 : imageHeight;
+
+        center = new Vec3(0, 0, 0);
+
+        // viewport
+        var focalLength = 1.0;
+        var viewportHeight = 2.0;
+        var viewportWidth = viewportHeight * aspectRatio;
+
+        // viewport vectors
+        var viewportU = new Vec3(viewportWidth, 0, 0);
+        var viewportV = new Vec3(0, -viewportHeight, 0);
+
+        pixelDeltaU = viewportU.divide(imageWidth);
+        pixelDeltaV = viewportV.divide(imageHeight);
+
+        // loc of upper left pixel
+        var viewportUpperLeftLoc = center.subtract(pixelDeltaU)
+                .subtract(new Vec3(0, 0, focalLength))
+                .subtract(viewportU.divide(2))
+                .subtract(viewportV.divide(2));
+        this.pixel100Loc = viewportUpperLeftLoc.add(pixelDeltaV.add(pixelDeltaU).multiply(0.5));
+    }
+
+    private Color rayColor(Ray r, Surface world) {
+        SurfaceRecord rec = new SurfaceRecord();
+
+        if (world.hit(r, new Interval(0, Double.POSITIVE_INFINITY), rec)) {
+            Color intermediate = new Color(rec.normal);
+            return (Color) (intermediate.add(new Color(1, 1, 1))).multiply(0.5);
+        }
+        Vec3 unitDirection = r.direction().normalize();
+
+        double a = 0.5 * (unitDirection.y() + 1.0);
+        Color startValue = new Color(1.0, 1.0, 1.0);
+        Color endValue = new Color(0.5, 0.7, 1.0);
+
+        return (Color) startValue.multiply(1.0 - a).add(endValue.multiply(a));
+    }
+
+    private void writeToFile(String filename, String contents) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+        writer.write(contents);
+
+        writer.close();
+    }
+
+    public double aspectRatio = 1.0;
+    public int imageWidth = 100;
+    private int imageHeight;
+    private Vec3 center;
+    private Vec3 pixel100Loc;
+    private Vec3 pixelDeltaU;
+    private Vec3 pixelDeltaV;
+    private StringBuilder builder;
+}
