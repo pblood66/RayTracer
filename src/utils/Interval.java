@@ -1,3 +1,5 @@
+package utils;
+
 public class Interval {
     public Interval() {
         min = Double.NEGATIVE_INFINITY;
@@ -20,6 +22,11 @@ public class Interval {
 
     public boolean surrounds(double x) {
         return min < x && x < max;
+    }
+
+    public double clamp(double x) {
+        if (x < min) return min;
+        return Math.min(x, max);
     }
 
     public double min() { return min; }

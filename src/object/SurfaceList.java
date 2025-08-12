@@ -1,4 +1,8 @@
+package object;
+
 import java.util.Vector;
+import utils.Interval;
+import utils.vector.Ray;
 
 public class SurfaceList implements Surface {
 

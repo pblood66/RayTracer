@@ -1,4 +1,4 @@
-import java.util.Vector;
+package utils.vector;
 
 public class Vec3 {
     protected double[] e = new double[3];

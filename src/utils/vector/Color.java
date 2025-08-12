@@ -1,3 +1,7 @@
+package utils.vector;
+
+import utils.Interval;
+
 public class Color extends Vec3 {
     public Color(double r, double g, double b) {
         super (r, g, b);
@@ -13,7 +17,7 @@ public class Color extends Vec3 {
 
     @Override
     public String toString() {
-        return "Color(" + r() + ", " + g() + ", " + b() + ")";
+        return "Vectors.Color(" + r() + ", " + g() + ", " + b() + ")";
     }
 
     @Override
@@ -21,10 +25,11 @@ public class Color extends Vec3 {
         return new Color(x, y, z);
     }
 
-    String writeColor() {
-        int rbyte = (int) (255.999 * e[0]);
-        int gbyte = (int) (255.999 * e[1]);
-        int bbyte = (int) (255.999 * e[2]);
+    public String writeColor() {
+        Interval intensity = new Interval(0.000, 0.999);
+        int rbyte = (int) (255.999 * intensity.clamp(r()));
+        int gbyte = (int) (255.999 * intensity.clamp(g()));
+        int bbyte = (int) (255.999 * intensity.clamp(b()));
 
         return rbyte + " " + gbyte + " " + bbyte + "\n";
     }

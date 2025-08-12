@@ -1,3 +1,5 @@
+package utils.vector;
+
 public class Ray {
     private Vec3 origin;
     private Vec3 direction;

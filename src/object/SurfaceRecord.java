@@ -1,3 +1,8 @@
+package object;
+
+import utils.vector.Ray;
+import utils.vector.Vec3;
+
 public class SurfaceRecord {
     public SurfaceRecord() {
         p = new Vec3();

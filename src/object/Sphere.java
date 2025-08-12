@@ -1,3 +1,9 @@
+package object;
+
+import utils.Interval;
+import utils.vector.Ray;
+import utils.vector.Vec3;
+
 public class Sphere implements Surface {
     public Sphere(Vec3 center, double radius) {
         this.center = center;

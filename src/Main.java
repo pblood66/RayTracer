@@ -1,4 +1,8 @@
-import java.io.FileWriter;
+import object.Sphere;
+import object.SurfaceList;
+import utils.Camera;
+import utils.vector.Vec3;
+
 import java.io.IOException;
 
 
@@ -10,8 +14,9 @@ public class Main {
        world.add(new Sphere(new Vec3(0, 0, -1), 0.5));
 
        Camera camera = new Camera();
-       camera.aspectRatio = 1.0;
+       camera.aspectRatio = 16.0 / 9.0;
        camera.imageWidth = 400;
+       camera.samplesPerPixel = 100;
 
        try {
             camera.render(world);

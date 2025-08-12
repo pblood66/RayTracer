@@ -1,3 +1,9 @@
+package utils;
+
+import utils.vector.*;
+import object.Surface;
+import object.SurfaceRecord;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,12 +18,13 @@ public class Camera {
                 System.out.print("\rLines Remaining: " + (imageHeight - j));
                 System.out.flush();
             for (int i = 0; i < imageWidth; i++) {
-                var pixelCenter = (pixel100Loc.add(pixelDeltaU.multiply(i))).add(pixelDeltaV.multiply(j));
-                var rayDirection = pixelCenter.subtract(center);
+                Color pixelColor = new Color(0, 0, 0);
+                for (int sample = 0; sample < samplesPerPixel; sample++) {
+                    Ray r = getRay(i, j);
+                    pixelColor = (Color) pixelColor.add(rayColor(r, world));
+                }
 
-                Ray r = new Ray(center, rayDirection);
-
-                Color pixelColor = rayColor(r, world);
+                pixelColor = (Color) pixelColor.multiply(pixelSamplesScale);
                 builder.append(pixelColor.writeColor());
             }
         }
@@ -30,6 +37,8 @@ public class Camera {
 
         imageHeight = (int) (imageWidth / aspectRatio);
         imageHeight = (imageHeight < 1) ? 1 : imageHeight;
+
+        pixelSamplesScale = (double) (1.0 / samplesPerPixel);
 
         center = new Vec3(0, 0, 0);
 
@@ -51,6 +60,22 @@ public class Camera {
                 .subtract(viewportU.divide(2))
                 .subtract(viewportV.divide(2));
         this.pixel100Loc = viewportUpperLeftLoc.add(pixelDeltaV.add(pixelDeltaU).multiply(0.5));
+    }
+
+    private Ray getRay(int i, int j) {
+        var offset = sampleSquare();
+        var iOffset = pixelDeltaU.multiply(i + offset.x());
+        var jOffset = pixelDeltaV.multiply(j + offset.y());
+        var pixelSample = pixel100Loc.add(iOffset).add(jOffset);
+
+        var rayOrigin = center;
+        var rayDirection = pixelSample.subtract(rayOrigin);
+
+        return new Ray(rayOrigin, rayDirection);
+    }
+
+    private Vec3 sampleSquare() {
+        return new Vec3(Random.randomDouble() - 0.5,  Random.randomDouble() - 0.5, 0);
     }
 
     private Color rayColor(Ray r, Surface world) {
@@ -76,9 +101,13 @@ public class Camera {
         writer.close();
     }
 
+
     public double aspectRatio = 1.0;
     public int imageWidth = 100;
+    public int samplesPerPixel = 10;
+
     private int imageHeight;
+    private double pixelSamplesScale;
     private Vec3 center;
     private Vec3 pixel100Loc;
     private Vec3 pixelDeltaU;
