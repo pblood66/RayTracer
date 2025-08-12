@@ -1,5 +1,7 @@
 package utils.vector;
 
+import utils.Random;
+
 public class Vec3 {
     protected double[] e = new double[3];
     public Vec3() {
@@ -21,6 +23,14 @@ public class Vec3 {
 
     public double z()  {
         return e[2];
+    }
+
+    public static Vec3 random() {
+        return new Vec3(Random.randomDouble(), Random.randomDouble(), Random.randomDouble());
+    }
+
+    public static Vec3 random(double min, double max) {
+        return new Vec3(Random.randomDouble(min, max), Random.randomDouble(min, max), Random.randomDouble(min, max));
     }
 
     protected Vec3 create(double x, double y, double z) {
