@@ -1,5 +1,5 @@
 public class Sphere implements Surface {
-    public Sphere(Point3 center, double radius) {
+    public Sphere(Vec3 center, double radius) {
         this.center = center;
         this.radius = radius;
     }
@@ -27,7 +27,7 @@ public class Sphere implements Surface {
         }
 
         rec.t = root;
-        rec.p = (Point3) r.at(rec.t);
+        rec.p = r.at(rec.t);
 //        rec.normal = (rec.p.subtract(center)).divide(radius);
         Vec3 outwardNormal = (rec.p.subtract(center)).divide(radius);
         rec.setFaceNormal(r, outwardNormal);
@@ -35,7 +35,7 @@ public class Sphere implements Surface {
         return true;
     }
 
-    private Point3 center;
+    private Vec3 center;
     private double radius;
 
 }

@@ -2,7 +2,9 @@ import java.util.Vector;
 
 public class SurfaceList implements Surface {
 
-    public SurfaceList() {}
+    public SurfaceList() {
+        this.objects = new Vector<Surface>();
+    }
 
     public SurfaceList(Surface s) {
         add(s);

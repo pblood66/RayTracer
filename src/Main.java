@@ -3,26 +3,14 @@ import java.io.IOException;
 
 
 public class Main {
+    public static Color rayColor(Ray r, Surface world) {
+        SurfaceRecord rec = new SurfaceRecord();
 
-    public static double hitSphere(Vec3 center, double radius, Ray r)  {
-        Vec3 oc = center.subtract(r.origin());
-        var a = r.direction().lengthSquared();
-        var h = Vec3.dot(r.direction(), oc);
-        var c = oc.lengthSquared() - radius * radius;
-        var discriminant = h * h - a * c;
+        if (world.hit(r, 0, Double.POSITIVE_INFINITY, rec)) {
+            Color interm = (Color) rec.normal;
 
-        if (discriminant < 0) {
-            return -1.0;
-        } else {
-            return (h - Math.sqrt(discriminant)) / a;
-        }
-    }
-
-    public static Color rayColor(Ray r) {
-        var t = hitSphere(new Vec3(0, 0, -1), 0.5, r);
-        if (t > 0.0) {
-            Vec3 N = Vec3.unitVector(r.at(t).subtract(new Vec3(0, 0, -1)));
-            return (Color) new Color(N.x() + 1, N.y() + 1, N.z() + 1).multiply(0.5);
+            return (Color) (interm.add(new Color(1, 1, 1)).multiply(0.5));
+//            return (Color) (rec.normal.add(new Color(1, 1, 1))).multiply(0.5);
         }
 
         Vec3 unitDirection = r.direction().normalize();
@@ -37,19 +25,28 @@ public class Main {
     public static void main(String[] args) {
         String filename = "image.ppm";
 
+        // image
         int imageWidth = 1600;
         double aspectRatio = 16.0 / 9.0;
         int imageHeight = (int) (imageWidth / aspectRatio);
         imageHeight = (imageHeight < 1) ? 1 : imageHeight;
 
+        // World
+        SurfaceList world = new SurfaceList();
+        world.add(new Sphere(new Point3(0,0,-1), 0.5));
+        world.add( new Sphere(new Point3(0, -100.5, -1), 100));
+
+        // camera
         double focalLength = 1.0;
         double viewportHeight = 2.0;
         double viewportWidth = viewportHeight * aspectRatio;
         Vec3 cameraCenter = new Vec3(0, 0, 0);
 
+        // Horizontal and vertical vectors of the viewpoint
         Vec3 viewportU = new Vec3(viewportWidth, 0, 0);
         Vec3 viewPortV = new Vec3(0, -viewportHeight, 0);
 
+        // Horizantal and Vertical delta vectors
         Vec3 pixelDeltaU = viewportU.divide(imageWidth);
         Vec3 pixelDeltaV = viewPortV.divide(imageHeight);
 
@@ -74,7 +71,7 @@ public class Main {
 
                 Ray ray = new Ray(cameraCenter, rayDirection);
 
-                Color pixelColor = rayColor(ray);
+                Color pixelColor = rayColor(ray, world);
                 str.append(pixelColor.writeColor());
             }
         }
