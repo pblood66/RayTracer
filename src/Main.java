@@ -33,10 +33,13 @@ public class Main {
         camera.samplesPerPixel = 100;
         camera.maxDepth = 50;
 
-        camera.vfov = 90;
+        camera.vfov = 20;
         camera.lookFrom = new Vec3(-2, 2, 1);
         camera.lookAt = new Vec3(0, 0, -1);
         camera.vup = new Vec3(0, 1, 0);
+
+        camera.defocusAngle = 10.0;
+        camera.focusDist    = 3.4;
 
         try {
             camera.render(world);

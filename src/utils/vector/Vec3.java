@@ -155,4 +155,13 @@ public class Vec3 {
         return v.divide(v.length());
     }
 
+    public static Vec3 randomInUnitDisk() {
+        while (true) {
+            var p = new Vec3(Random.randomDouble(-1, 1), Random.randomDouble(-1, 1), 0);
+            if (p.lengthSquared() < 1) {
+                return p;
+            }
+        }
+    }
+
 }

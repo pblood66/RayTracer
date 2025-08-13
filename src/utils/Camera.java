@@ -43,10 +43,9 @@ public class Camera {
         center = lookFrom;
 
         // viewport
-        var focalLength = (lookFrom.subtract(lookAt)).length();
         var theta = Math.toRadians(vfov);
         var h = Math.tan(theta / 2);
-        var viewportHeight = 2.0 * h * focalLength;
+        var viewportHeight = 2.0 * h * focusDist;
         var viewportWidth = viewportHeight * aspectRatio;
 
         w = Vec3.unitVector(lookFrom.subtract(lookAt));
@@ -62,10 +61,14 @@ public class Camera {
 
         // loc of upper left pixel
         var viewportUpperLeftLoc = center.subtract(pixelDeltaU)
-                .subtract(w.multiply(focalLength))
+                .subtract(w.multiply(focusDist))
                 .subtract(viewportU.divide(2))
                 .subtract(viewportV.divide(2));
         this.pixel100Loc = viewportUpperLeftLoc.add(pixelDeltaV.add(pixelDeltaU).multiply(0.5));
+
+        var defocusRadius = focusDist * Math.tan(Math.toRadians(defocusAngle / 2));
+        defocusDiskU = u.multiply(defocusRadius);
+        defocusDiskV = v.multiply(defocusRadius);
     }
 
     private Ray getRay(int i, int j) {
@@ -74,7 +77,7 @@ public class Camera {
         var jOffset = pixelDeltaV.multiply(j + offset.y());
         var pixelSample = pixel100Loc.add(iOffset).add(jOffset);
 
-        var rayOrigin = center;
+        var rayOrigin = (defocusAngle <= 0) ? center : defocusDiskSample();
         var rayDirection = pixelSample.subtract(rayOrigin);
 
         return new Ray(rayOrigin, rayDirection);
@@ -116,6 +119,10 @@ public class Camera {
         writer.close();
     }
 
+    private Vec3 defocusDiskSample() {
+        var p = Vec3.randomInUnitDisk();
+        return center.add(defocusDiskU.multiply(p.x())).add(defocusDiskV.multiply(p.y()));
+    }
 
     public double aspectRatio = 1.0;
     public int imageWidth = 100;
@@ -127,6 +134,9 @@ public class Camera {
     public Vec3 lookAt = new Vec3(0, 0, -1);
     public Vec3 vup = new Vec3(0, 1, 0);
 
+    public double defocusAngle = 0;
+    public double focusDist = 10;
+
     private int imageHeight;
     private double pixelSamplesScale;
     private Vec3 center;
@@ -135,4 +145,6 @@ public class Camera {
     private Vec3 pixelDeltaV;
     private StringBuilder builder;
     private Vec3 u, v, w;
+    private Vec3 defocusDiskU;
+    private Vec3 defocusDiskV;
 }
