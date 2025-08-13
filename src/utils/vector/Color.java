@@ -1,6 +1,7 @@
 package utils.vector;
 
 import utils.Interval;
+import utils.Random;
 
 public class Color extends Vec3 {
     public Color(double r, double g, double b) {
@@ -29,6 +30,14 @@ public class Color extends Vec3 {
     @Override
     protected Vec3 create(double x, double y, double z) {
         return new Color(x, y, z);
+    }
+
+    public static Color random() {
+        return new Color(Random.randomDouble(), Random.randomDouble(), Random.randomDouble());
+    }
+
+    public static Color random(double min, double max) {
+        return new Color(Random.randomDouble(min, max), Random.randomDouble(min, max), Random.randomDouble(min, max));
     }
 
     private double linearToGamma(double linearComp) {
