@@ -33,7 +33,7 @@ public class Vec3 {
         return new Vec3(Random.randomDouble(min, max), Random.randomDouble(min, max), Random.randomDouble(min, max));
     }
 
-    public Vec3 randomUnitVector() {
+    public static Vec3 randomUnitVector() {
         while (true) {
             var p = random(-1, 1);
             var lensq = p.lengthSquared();

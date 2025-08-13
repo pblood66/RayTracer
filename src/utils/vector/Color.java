@@ -25,11 +25,27 @@ public class Color extends Vec3 {
         return new Color(x, y, z);
     }
 
+    private double linearToGamma(double linearComp) {
+        if (linearComp > 0) {
+            return Math.sqrt(linearComp);
+        }
+
+        return 0;
+    }
+
     public String writeColor() {
+        var r = r();
+        var g = g();
+        var b = b();
+
+        r = linearToGamma(r);
+        g = linearToGamma(g);
+        b = linearToGamma(b);
+
         Interval intensity = new Interval(0.000, 0.999);
-        int rbyte = (int) (255.999 * intensity.clamp(r()));
-        int gbyte = (int) (255.999 * intensity.clamp(g()));
-        int bbyte = (int) (255.999 * intensity.clamp(b()));
+        int rbyte = (int) (255.999 * intensity.clamp(r));
+        int gbyte = (int) (255.999 * intensity.clamp(g));
+        int bbyte = (int) (255.999 * intensity.clamp(b));
 
         return rbyte + " " + gbyte + " " + bbyte + "\n";
     }

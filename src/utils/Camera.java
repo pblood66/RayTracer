@@ -21,7 +21,7 @@ public class Camera {
                 Color pixelColor = new Color(0, 0, 0);
                 for (int sample = 0; sample < samplesPerPixel; sample++) {
                     Ray r = getRay(i, j);
-                    pixelColor = (Color) pixelColor.add(rayColor(r, world));
+                    pixelColor = (Color) pixelColor.add(rayColor(r, maxDepth, world));
                 }
 
                 pixelColor = (Color) pixelColor.multiply(pixelSamplesScale);
@@ -78,12 +78,16 @@ public class Camera {
         return new Vec3(Random.randomDouble() - 0.5,  Random.randomDouble() - 0.5, 0);
     }
 
-    private Color rayColor(Ray r, Surface world) {
+    private Color rayColor(Ray r, int depth, Surface world) {
+        if (depth <= 0) {
+            return new Color(0, 0, 0);
+        }
+
         SurfaceRecord rec = new SurfaceRecord();
 
-        if (world.hit(r, new Interval(0, Double.POSITIVE_INFINITY), rec)) {
-            Vec3 direction = Vec3.randomOnHemisphere(rec.normal);
-            return (Color) rayColor(new Ray(rec.p, direction), world).multiply(0.5);
+        if (world.hit(r, new Interval(0.001, Double.POSITIVE_INFINITY), rec)) {
+            Vec3 direction =rec.normal.add(Vec3.randomUnitVector());
+            return (Color) rayColor(new Ray(rec.p, direction), depth - 1, world).multiply(0.5);
         }
         Vec3 unitDirection = r.direction().normalize();
 
@@ -105,6 +109,7 @@ public class Camera {
     public double aspectRatio = 1.0;
     public int imageWidth = 100;
     public int samplesPerPixel = 10;
+    public int maxDepth = 10;
 
     private int imageHeight;
     private double pixelSamplesScale;
