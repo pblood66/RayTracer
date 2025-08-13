@@ -40,23 +40,29 @@ public class Camera {
 
         pixelSamplesScale = (double) (1.0 / samplesPerPixel);
 
-        center = new Vec3(0, 0, 0);
+        center = lookFrom;
 
         // viewport
-        var focalLength = 1.0;
-        var viewportHeight = 2.0;
+        var focalLength = (lookFrom.subtract(lookAt)).length();
+        var theta = Math.toRadians(vfov);
+        var h = Math.tan(theta / 2);
+        var viewportHeight = 2.0 * h * focalLength;
         var viewportWidth = viewportHeight * aspectRatio;
 
+        w = Vec3.unitVector(lookFrom.subtract(lookAt));
+        u = Vec3.unitVector(Vec3.cross(vup, w));
+        v = Vec3.cross(w, u);
+
         // viewport vectors
-        var viewportU = new Vec3(viewportWidth, 0, 0);
-        var viewportV = new Vec3(0, -viewportHeight, 0);
+        var viewportU = u.multiply(viewportWidth);
+        var viewportV = (v.negate()).multiply(viewportHeight);
 
         pixelDeltaU = viewportU.divide(imageWidth);
         pixelDeltaV = viewportV.divide(imageHeight);
 
         // loc of upper left pixel
         var viewportUpperLeftLoc = center.subtract(pixelDeltaU)
-                .subtract(new Vec3(0, 0, focalLength))
+                .subtract(w.multiply(focalLength))
                 .subtract(viewportU.divide(2))
                 .subtract(viewportV.divide(2));
         this.pixel100Loc = viewportUpperLeftLoc.add(pixelDeltaV.add(pixelDeltaU).multiply(0.5));
@@ -116,6 +122,11 @@ public class Camera {
     public int samplesPerPixel = 10;
     public int maxDepth = 10;
 
+    public int vfov = 90;
+    public Vec3 lookFrom = new Vec3(0, 0, 0);
+    public Vec3 lookAt = new Vec3(0, 0, -1);
+    public Vec3 vup = new Vec3(0, 1, 0);
+
     private int imageHeight;
     private double pixelSamplesScale;
     private Vec3 center;
@@ -123,4 +134,5 @@ public class Camera {
     private Vec3 pixelDeltaU;
     private Vec3 pixelDeltaV;
     private StringBuilder builder;
+    private Vec3 u, v, w;
 }

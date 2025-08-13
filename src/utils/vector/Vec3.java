@@ -141,6 +141,12 @@ public class Vec3 {
                 e[0] * v.e[1] - e[1] * v.e[0]);
     }
 
+    public static Vec3 cross(Vec3 v1, Vec3 v2) {
+        return new Vec3(v1.e[1] * v2.e[2] - v1.e[2] * v2.e[1],
+                v1.e[2] * v2.e[0] - v1.e[0] * v2.e[2],
+                v1.e[0] * v2.e[1] - v1.e[1] * v2.e[0]);
+    }
+
     public Vec3 normalize() {
         return this.divide(this.length());
     }

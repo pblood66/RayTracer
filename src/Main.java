@@ -26,11 +26,17 @@ public class Main {
         world.add(new Sphere(new Vec3(-1.0, 0.0, -1.0), 0.4, materialBubble));
         world.add(new Sphere(new Vec3(1.0, 0.0, -1.0), 0.5, materialRight));
 
+
         Camera camera = new Camera();
         camera.aspectRatio = 16.0 / 9.0;
         camera.imageWidth = 400;
         camera.samplesPerPixel = 100;
         camera.maxDepth = 50;
+
+        camera.vfov = 90;
+        camera.lookFrom = new Vec3(-2, 2, 1);
+        camera.lookAt = new Vec3(0, 0, -1);
+        camera.vup = new Vec3(0, 1, 0);
 
         try {
             camera.render(world);
