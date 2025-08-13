@@ -15,6 +15,12 @@ public class Color extends Vec3 {
     public double g() { return e[1]; }
     public double b() { return e[2]; }
 
+    public void setColor(Color color) {
+        e[0] = color.r();
+        e[1] = color.g();
+        e[2] = color.b();
+    }
+
     @Override
     public String toString() {
         return "Vectors.Color(" + r() + ", " + g() + ", " + b() + ")";

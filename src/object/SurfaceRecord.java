@@ -1,5 +1,6 @@
 package object;
 
+import materials.Material;
 import utils.vector.Ray;
 import utils.vector.Vec3;
 
@@ -11,6 +12,7 @@ public class SurfaceRecord {
 
     public Vec3 p;
     public Vec3 normal;
+    public Material mat;
     public double t;
     public boolean frontFace;
 
@@ -31,5 +33,6 @@ public class SurfaceRecord {
         this.normal = rec.normal;
         this.t = rec.t;
         this.frontFace = rec.frontFace;
+        this.mat = rec.mat;
     }
 }

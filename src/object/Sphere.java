@@ -1,5 +1,6 @@
 package object;
 
+import materials.Material;
 import utils.Interval;
 import utils.vector.Ray;
 import utils.vector.Vec3;
@@ -8,6 +9,12 @@ public class Sphere implements Surface {
     public Sphere(Vec3 center, double radius) {
         this.center = center;
         this.radius = radius;
+    }
+
+    public Sphere(Vec3 center, double radius, Material mat) {
+        this.center = center;
+        this.radius = Math.max(0, radius);
+        this.mat = mat;
     }
 
     @Override
@@ -37,11 +44,13 @@ public class Sphere implements Surface {
         rec.normal = (rec.p.subtract(center)).divide(radius);
         Vec3 outwardNormal = (rec.p.subtract(center)).divide(radius);
         rec.setFaceNormal(r, outwardNormal);
+        rec.mat = mat;
 
         return true;
     }
 
     private Vec3 center;
     private double radius;
+    private Material mat;
 
 }

@@ -52,6 +52,11 @@ public class Vec3 {
         }
     }
 
+    public static Vec3 reflect(Vec3 v, Vec3 normal) {
+        // v - 2 * dot(v,normal) * n
+        return v.subtract(normal.multiply(2 * dot(v, normal)));
+    }
+
     protected Vec3 create(double x, double y, double z) {
         return new Vec3(x, y, z);
     }
@@ -98,6 +103,11 @@ public class Vec3 {
 
     public double lengthSquared() {
         return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+    }
+
+    public boolean nearZero() {
+        var s = 1e-8;
+        return (Math.abs(e[0]) < s) && (Math.abs(e[1]) < s) && (Math.abs(e[2]) < s);
     }
 
     public double length() {

@@ -86,8 +86,13 @@ public class Camera {
         SurfaceRecord rec = new SurfaceRecord();
 
         if (world.hit(r, new Interval(0.001, Double.POSITIVE_INFINITY), rec)) {
-            Vec3 direction =rec.normal.add(Vec3.randomUnitVector());
-            return (Color) rayColor(new Ray(rec.p, direction), depth - 1, world).multiply(0.5);
+            Ray scattered = new Ray();
+            Color attenuation = new Color(0,0,0);
+
+            if (rec.mat.scatter(r, rec, attenuation, scattered)) {
+                return (Color) attenuation.multiply(rayColor(scattered, depth - 1, world));
+            }
+            return new Color(0, 0,0 );
         }
         Vec3 unitDirection = r.direction().normalize();
 
