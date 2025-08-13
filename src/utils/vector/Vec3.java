@@ -57,6 +57,15 @@ public class Vec3 {
         return v.subtract(normal.multiply(2 * dot(v, normal)));
     }
 
+    public static Vec3 refract(Vec3 uv, Vec3 normal, double etaiOverEtat) {
+        var cosTheta = Math.min(dot(uv.negate(), normal), 1.0);
+        Vec3 rOutPerp = (uv.add(normal.multiply(cosTheta))).multiply(etaiOverEtat);
+
+        // -sqrt(abs(1.0 - rOutPerp.lengthSquared())) * normal
+        Vec3 rOutParallel = normal.multiply(-Math.sqrt(Math.abs(1.0 - rOutPerp.lengthSquared())));
+        return rOutPerp.add(rOutParallel);
+    }
+
     protected Vec3 create(double x, double y, double z) {
         return new Vec3(x, y, z);
     }

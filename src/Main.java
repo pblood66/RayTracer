@@ -1,3 +1,4 @@
+import materials.Dielectric;
 import materials.Lambertian;
 import materials.Metal;
 import object.Sphere;
@@ -15,12 +16,14 @@ public class Main {
 
         var materialGround = new Lambertian(new Color(0.8, 0.8, 0.0));
         var materialCenter = new Lambertian(new Color(0.1, 0.2, 0.5));
-        var materialLeft = new Metal(new Color(0.8, 0.8, 0.8), 0.3);
+        var materialLeft = new Dielectric(1.50);
+        var materialBubble = new Dielectric(1.0 / 1.50);
         var materialRight = new Metal(new Color(0.8, 0.6, 0.2), 1.0);
 
         world.add(new Sphere(new Vec3(0.0, -100.5, -1.0), 100.0, materialGround));
         world.add(new Sphere(new Vec3(0.0, 0.0, -1.2), 0.5, materialCenter));
         world.add(new Sphere(new Vec3(-1.0, 0.0, -1.0), 0.5, materialLeft));
+        world.add(new Sphere(new Vec3(-1.0, 0.0, -1.0), 0.4, materialBubble));
         world.add(new Sphere(new Vec3(1.0, 0.0, -1.0), 0.5, materialRight));
 
         Camera camera = new Camera();
