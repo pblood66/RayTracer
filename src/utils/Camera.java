@@ -82,8 +82,8 @@ public class Camera {
         SurfaceRecord rec = new SurfaceRecord();
 
         if (world.hit(r, new Interval(0, Double.POSITIVE_INFINITY), rec)) {
-            Color intermediate = new Color(rec.normal);
-            return (Color) (intermediate.add(new Color(1, 1, 1))).multiply(0.5);
+            Vec3 direction = Vec3.randomOnHemisphere(rec.normal);
+            return (Color) rayColor(new Ray(rec.p, direction), world).multiply(0.5);
         }
         Vec3 unitDirection = r.direction().normalize();
 

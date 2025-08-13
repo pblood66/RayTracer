@@ -33,6 +33,25 @@ public class Vec3 {
         return new Vec3(Random.randomDouble(min, max), Random.randomDouble(min, max), Random.randomDouble(min, max));
     }
 
+    public Vec3 randomUnitVector() {
+        while (true) {
+            var p = random(-1, 1);
+            var lensq = p.lengthSquared();
+            if (1e-160 < lensq && lensq <= 1) {
+                return p.divide(Math.sqrt(lensq));
+            }
+        }
+    }
+
+    public static Vec3 randomOnHemisphere(Vec3 normal) {
+        Vec3 onUnitSphere = random();
+        if (dot(onUnitSphere, normal) > 0.0) {
+            return onUnitSphere;
+        } else {
+            return onUnitSphere.negate();
+        }
+    }
+
     protected Vec3 create(double x, double y, double z) {
         return new Vec3(x, y, z);
     }
